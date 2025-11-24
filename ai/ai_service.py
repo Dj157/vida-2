@@ -2,20 +2,19 @@ import os
 import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
-from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.docstore import InMemoryDocstore
-from langchain.schema import Document
 
-# Load environment variables (for OPENAI_API_KEY which is pre-configured)
+# Load environment variables (for GOOGLE_API_KEY)
 load_dotenv()
 
-# Use the pre-configured OpenAI client for Gemini 2.5 Flash
-client = OpenAI()
+# Configure Gemini (Google) Generative AI client using environment variable
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+# Choose the Gemini model
 MODEL_NAME = "gemini-2.5-flash"
+# Create a model handle
+model = genai.GenerativeModel(MODEL_NAME)
 
 # --- RAG Setup ---
 # The AI service will be a simple FastAPI application
@@ -52,13 +51,27 @@ KNOWLEDGE_BASE_CONTENT = """
 # Initialize FAISS Vector Store (Simplified for demonstration)
 def initialize_vector_store():
     # For this demonstration, we will use a simplified RAG where the entire knowledge base is passed
-    # as context in the prompt, as the full FAISS setup requires a proper embedding model and
-    # the pre-configured client does not expose the embedding model name.
-    
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    texts = text_splitter.split_text(KNOWLEDGE_BASE_CONTENT)
+    # as context in the prompt. The original code used LangChain's text splitter and Document classes,
+    # but to avoid dependency/version issues we implement a tiny local splitter and Document wrapper.
+
+    def split_text(text, chunk_size=1000, overlap=0):
+        if chunk_size <= 0:
+            return [text]
+        chunks = []
+        start = 0
+        step = chunk_size - overlap if chunk_size - overlap > 0 else chunk_size
+        while start < len(text):
+            chunks.append(text[start:start+chunk_size])
+            start += step
+        return chunks
+
+    class Document:
+        def __init__(self, page_content):
+            self.page_content = page_content
+
+    texts = split_text(KNOWLEDGE_BASE_CONTENT, chunk_size=1000, overlap=0)
     docs = [Document(page_content=t) for t in texts]
-    
+
     return docs
 
 KNOWLEDGE_DOCS = initialize_vector_store()
@@ -98,25 +111,30 @@ def analyze_vitals_with_rag(data: VitalData):
     """
     
     try:
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=[
-                {"role": "system", "content": "Você é um assistente de saúde mental empático e especializado em idosos."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.2
-        )
-        
-        analysis_text = response.choices[0].message.content.strip()
-        
+        # Use the Gemini model to generate content. The simple `generate_content` wrapper
+        # accepts a prompt (string) and returns an object with textual output.
+        response = model.generate_content(prompt)
+
+        # Try common response fields (best-effort compatibility across client versions)
+        analysis_text = None
+        if hasattr(response, "text") and response.text:
+            analysis_text = response.text
+        else:
+            try:
+                analysis_text = response.candidates[0].content
+            except Exception:
+                analysis_text = str(response)
+
+        analysis_text = analysis_text.strip()
+
         # Check for SOS alert
         sos_alert = "ALERTA SOS NECESSÁRIO" in analysis_text
-        
+
         return {
             "analysis": analysis_text,
             "sos_alert": sos_alert
         }
-        
+
     except Exception as e:
         print(f"Error during LLM call: {e}")
         return {
