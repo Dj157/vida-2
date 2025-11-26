@@ -146,17 +146,7 @@ pkill -f "uvicorn\|node index.js\|react-scripts" || true \
 Acesse:
 [http://localhost:3000](http://localhost:3000)
 
----
-
-##  Visão para o Futuro
-
-* IA preditiva de risco cardíaco e emocional
-* Dashboard clínico para caregivers e familiares
-* Alertas automáticos e notificações seguras
-* Integração com prontuários ou sistemas de saúde
-* Machine Learning adaptativo + histórico longitudinal
 
 
-```
 
 
