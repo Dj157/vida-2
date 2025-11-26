@@ -1,80 +1,162 @@
-# Projeto Vida+Ativa 💚
+# Vida+Ativa 💚  
+Sistema inteligente de monitoramento de saúde e bem-estar mental para idosos, orientado por IA avançada.  
+Precisão clínica. Empatia algorítmica. Vigilância cuidadora.
 
-Sistema de monitoramento de saúde e bem-estar mental de idosos com uso de Inteligência Artificial (IA) e dados de smartwatch.
+---
 
-## 🚀 Arquitetura e Tecnologia
+## 🚀 Arquitetura & Tecnologias  
 
-O projeto utiliza uma arquitetura de microsserviços para separar as responsabilidades:
+Arquitetura em microsserviços — modular, clara, facilmente expansível:
 
-| Componente | Tecnologia Principal | Porta Padrão | Descrição |
-| :--- | :--- | :--- | :--- |
-| **Frontend** | React + Tailwind | 3000 | Interface do usuário para visualização dos dados e análise da IA. |
-| **Backend** | Node.js + Express | 3001 | Orquestrador principal. Recebe dados (simulados/reais) e se comunica com o serviço de IA. |
-| **Serviço de IA** | Python + FastAPI + LLM (Gemini 2.5 Flash) + RAG | 8001 | Analisa os dados vitais e gera recomendações e alertas SOS com base em uma base de conhecimento especializada. |
-| **Banco de Dados** | SQLite | N/A | Utilizado para prototipagem. |
+| Componente     | Tecnologia Principal                        | Porta | Função |
+|---------------|---------------------------------------------|-------|--------|
+| Frontend      | React + Tailwind                            | 3000  | Interface visual com dados + respostas da IA |
+| Backend       | Node.js + Express                           | 3001  | Orquestra requisições e conecta com o serviço de IA |
+| Serviço de IA | Python + FastAPI + :contentReference[oaicite:0]{index=0} + RAG | 8001  | Processa dados vitais e gera análises inteligentes |
+| Banco (protótipo) | SQLite                                 | —     | Persistência local simples |
 
-## 🧠 O Uso da Inteligência Artificial (LLM + RAG)
+Fluxo de dados:  
+Frontend → Backend → Serviço de IA → Backend → Frontend
 
-O coração do projeto é o serviço de IA, que utiliza a arquitetura **RAG (Retrieval-Augmented Generation)**:
+---
 
-1.  **Dados Vitais:** O Backend envia dados de saúde (Frequência Cardíaca, Sono, Passos) para o Serviço de IA.
-2.  **RAG:** O Serviço de IA utiliza o **Gemini 2.5 Flash** como LLM e uma base de conhecimento interna (RAG) sobre saúde mental de idosos para contextualizar os dados.
-3.  **Análise:** A IA gera uma análise empática e uma recomendação, além de acionar um **ALERTA SOS** se a Frequência Cardíaca estiver acima de 120 bpm.
+## 🧠 Núcleo Inteligente: LLM + RAG em Profundidade  
 
-## 🛠️ Como Rodar o Sistema (Passo a Passo)
+Aqui mora o cérebro do sistema — interpretação real, cuidado humano via código.
 
-O sistema é composto por três partes que devem ser iniciadas em ordem: **Serviço de IA**, **Backend** e **Frontend**.
+### 🔹 LLM – Large Language Model  
+Usa Gemini 2.5 Flash (Google) para:  
+- interpretar sinais vitais brutos (frequência cardíaca, sono, passos)  
+- traduzir números em significado clínico e emocional  
+- gerar linguagem empática, adaptada ao contexto do idoso  
+- adaptar resposta conforme histórico/contexto  
 
-### Pré-requisitos
+Não é apenas um “responde a prompt”. É um diálogo médico-digital.
 
-*   Node.js (v18+)
-*   Python (v3.10+)
-*   npm
+### 🔹 RAG – Retrieval-Augmented Generation  
+Sistema consulta uma base especializada antes de pedir interpretação ao LLM — para garantir precisão médica/contextual:
 
-### 1. Configurar e Iniciar o Serviço de IA (Python)
+Pipeline:
 
-O serviço de IA é o primeiro a ser iniciado, pois o Backend depende dele.
+1. Recebe dados vitais do backend  
+2. Busca na base especializada sobre saúde mental e bem-estar de idosos  
+3. Injeta contexto + dados ao prompt  
+4. Envia para o Gemini 2.5 Flash  
+5. Recebe resposta fundamentada  
+
+Base de conhecimento inclui:  
+- parâmetros cardiológicos seguros para idosos  
+- padrões de sono saudável  
+- sinais clínicos de estresse, ansiedade, depressão  
+- diretrizes de atividade física e bem-estar  
+- tom de comunicação empática  
+
+IA ancorada em ciência. Não em sorte.
+
+---
+
+## 📊 Fluxo de Processamento da IA  
+
+Dados enviados (exemplo):
+
+```json
+{
+  "heart_rate": 105,
+  "sleep_duration_hours": 5.5,
+  "steps_count": 800,
+  "user_id": "idoso_001"
+}
+````
+
+Processamento:
+
+* Normalização e validação dos valores
+* Comparação com ranges seguros/predefinidos
+* Consulta à base RAG
+* Geração de análise interpretativa
+
+Saída:
+
+* Diagnóstico contextualizado
+* Recomendações práticas (sono, exercício, descanso, alerta, etc.)
+* Linguagem empática e acessível
+* **ALERTA SOS se frequência cardíaca > 120 bpm**
+
+---
+
+## ⚠️ Estado Atual: Dados Simulados
+
+Dados provisórios vêm de `backend/controllers/monitoramentoController.js`, com valores fixos:
+
+* 105 bpm
+* 5.5 h de sono
+* 800 passos
+
+Consequências:
+
+* Input constante → respostas semelhantes da IA
+* Status geralmente “atenção moderada”
+
+Serve para demonstração e testes.
+
+---
+
+## 🔄 Caminhos para Dados Reais
+
+Para transformar demonstração em produto:
+
+* Integração com APIs de smartwatches (Fitbit, Garmin, Apple Watch)
+* Conexão Bluetooth para dados em tempo real
+* Uso de banco de dados robusto (PostgreSQL ou similar)
+* Armazenamento histórico e persistente para análise longitudinal
+
+Objetivo: adicionar rastreamento contínuo, histórico real, predição de risco e alertas reais.
+
+---
+
+## ✅ O que Já Funciona
+
+* Microsserviços comunicando corretamente
+* Pipeline completo: Frontend ↔ Backend ↔ IA
+* Lógica RAG + LLM ativa e funcional
+* Respostas da IA geradas com coerência
+* Sistema de alerta implementado
+* Interface de usuário operacional
+
+---
+
+## 🛠️ Como Rodar (modo simples)
+
+Pré-requisitos:
+
+* Node.js v18+
+* Python 3.10+
+* npm
+
+Comando único para reiniciar tudo:
 
 ```bash
-# 1. Navegue até a pasta do serviço de IA
-cd vida-2/ai
-
-# 2. Instale as dependências Python
-sudo pip3 install -r requirements.txt
-
-# 3. Inicie o servidor FastAPI (porta 8001)
-# O serviço usará o modelo Gemini 2.5 Flash, que já está configurado no ambiente.
-uvicorn ai_service:app --host 0.0.0.0 --port 8001
+pkill -f "uvicorn\|node index.js\|react-scripts" || true \
+&& sleep 1 \
+&& cd /workspaces/vida-2 \
+&& rm -f ai/ai.log backend/backend.log frontend/frontend.log \
+&& bash start-simple.sh
 ```
 
-### 2. Configurar e Iniciar o Backend (Node.js)
+Acesse:
+[http://localhost:3000](http://localhost:3000)
 
-O Backend se comunica com o Frontend (porta 3000) e com o Serviço de IA (porta 8001).
+---
 
-```bash
-# 1. Abra um novo terminal e navegue até a pasta do Backend
-cd vida-2/backend
+##  Visão para o Futuro
 
-# 2. Instale as dependências Node.js
-npm install
+* IA preditiva de risco cardíaco e emocional
+* Dashboard clínico para caregivers e familiares
+* Alertas automáticos e notificações seguras
+* Integração com prontuários ou sistemas de saúde
+* Machine Learning adaptativo + histórico longitudinal
 
-# 3. Inicie o servidor Node.js (porta 3001)
-npm start
+
 ```
 
-### 3. Configurar e Iniciar o Frontend (React)
 
-O Frontend consome os dados processados do Backend.
-
-```bash
-# 1. Abra um terceiro terminal e navegue até a pasta do Frontend
-cd vida-2/frontend
-
-# 2. Instale as dependências Node.js
-npm install
-
-# 3. Inicie a aplicação React (porta 3000)
-npm start
-```
-
-Após seguir estes passos, o sistema estará totalmente funcional e acessível em `http://localhost:3000`. O Frontend exibirá os dados vitais (simulados no `monitoramentoController.js`) e a análise gerada em tempo real pelo Serviço de IA.
