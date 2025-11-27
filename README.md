@@ -146,7 +146,7 @@ pkill -f "uvicorn\|node index.js\|react-scripts" || true \
 Acesse:
 [http://localhost:3000](http://localhost:3000)
 
-
+link para apresentação: https://gamma.app/docs/PROJETO-VIDAATIVA-vxb07igjv72jo4d?mode=present#card-ykltne9om6b1oz5
 
 
 
