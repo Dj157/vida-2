@@ -1,7 +1,8 @@
 const axios = require('axios');
 
 // URL do serviço de IA (FastAPI)
-const AI_SERVICE_URL = 'http://localhost:8001/analyze_vitals';
+require('dotenv').config();
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8001/analyze_vitals';
 
 const getMonitoramento = async (req, res) => {
   // Dados simulados para teste (substituir pela leitura real do smartwatch)
