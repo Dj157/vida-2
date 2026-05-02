@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const axios = require("axios");
 const healthMockRoutes = require("./routes/healthMock");
 const monitoramentoRoutes = require("./routes/monitoramento");
+const webhookRoutes = require("./routes/webhooks");
 
 
 const app = express();
@@ -41,6 +42,7 @@ app.use("/", healthMockRoutes);
 
 //nova rota de monitoramento
 app.use("/api/monitoramento", monitoramentoRoutes);
+app.use("/webhooks", webhookRoutes);
 
 // Catch-all: servir index.html para rotas não encontradas (React Router)
 app.use((req, res) => {
